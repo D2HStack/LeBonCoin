@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 // import middleware
 const isTokenValid = require("../middleware/isTokenValid");
+const isAdministrator = require("../middleware/isAdministrator");
 
 // import utility functions
 const isEmpty = require("../utility/isEmpty");
@@ -22,7 +23,7 @@ router.post("/offer/publish", isTokenValid, async (req, res) => {
   try {
     // import and put in new variables
     //console.log(req.fields);
-    //console.log(req.headers.token);
+
     // test if request is empty or keys in keysTest are empty
     const keysTest = ["title", "description", "price"];
     const IsEmptyFields = isEmpty(req.fields, keysTest);
@@ -45,6 +46,26 @@ router.post("/offer/publish", isTokenValid, async (req, res) => {
     res
       .status(200)
       .json({ message: "Your offer has been successfully published." });
+  } catch (error) {
+    console.log("error.message", error.message);
+    res.json(error.message);
+  }
+});
+
+// route: list all offer with total number of offers
+router.get("/offer/all-with-count", isAdministrator, async (req, res) => {
+  try {
+    // import and put in new variables
+    //console.log(req.fields);
+    // test if request is empty or keys in keysTest are empty
+
+    const offers = await Offer.find().populate("userId");
+    //console.log(offers);
+    res.status(200).json({
+      message:
+        "Please find the list of all offers and with total number of offers.",
+      data: { count: offers.length, offers }
+    });
   } catch (error) {
     console.log("error.message", error.message);
     res.json(error.message);

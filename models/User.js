@@ -5,12 +5,13 @@ const mongoose = require("mongoose");
 
 // create model
 const User = mongoose.model("User", {
-  email: { type: String, unique: true },
-  username: String,
-  phone: { type: String, unique: true },
-  token: String,
-  salt: String,
-  hash: String
+  email: { type: String, required: true, unique: true },
+  username: { type: String, required: true, unique: true },
+  phone: { type: String, required: true, unique: true },
+  token: { type: String, required: true, unique: true },
+  salt: { type: String, required: true, unique: true },
+  hash: { type: String, required: true, unique: true },
+  role: { type: String, required: true }
 });
 
 // export

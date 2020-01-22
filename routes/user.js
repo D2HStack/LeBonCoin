@@ -30,7 +30,8 @@ router.post("/user/sign_up", async (req, res) => {
       "username",
       "phone",
       "password",
-      "confirmedPassword"
+      "confirmedPassword",
+      "role"
     ];
     const IsEmptyFields = isEmpty(req.fields, keysTest);
     //console.log(IsEmptyFields);
@@ -61,6 +62,7 @@ router.post("/user/sign_up", async (req, res) => {
           token,
           salt,
           hash,
+          role: req.fields.role,
           username: req.fields.username,
           phone: req.fields.phone
         });

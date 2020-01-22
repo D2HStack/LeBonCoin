@@ -11,7 +11,9 @@ const Offer = mongoose.model("Offer", {
   created: Date,
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User"
+    ref: "User",
+    required: true,
+    unique: true
   }
 });
 
