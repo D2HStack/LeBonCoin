@@ -2,6 +2,7 @@
 const express = require("express");
 const router = express.Router();
 // import middleware
+const isTokenValid = require("../middleware/isTokenValid");
 
 // import utility functions
 const isEmpty = require("../utility/isEmpty");
@@ -16,8 +17,8 @@ const Offer = require("../models/Offer");
 const Log = require("../models/Log");
 
 // create routes
-// route: sign up a user
-router.post("/offer/publish", async (req, res) => {
+// route: publish an offer
+router.post("/offer/publish", isTokenValid, async (req, res) => {
   try {
     // import and put in new variables
     //console.log(req.fields);
@@ -31,30 +32,19 @@ router.post("/offer/publish", async (req, res) => {
         message: "Please fill in the empty fields."
       });
     }
-    // find user with the token in the header
-    const user = await User.findOne({
-      token: req.headers.token
+
+    const newOffer = new Offer({
+      title: req.fields.title,
+      description: req.fields.description,
+      price: req.fields.price,
+      created: new Date(),
+      userId: req.user._id
     });
-    console.log(user);
-    if (!user) {
-      res
-        .status(400)
-        .json({ message: "Please log in before posting offer." })
-        .redirect(301, "/user/log_in");
-    } else {
-      const newOffer = new Offer({
-        title: req.fields.title,
-        description: req.fields.description,
-        price: req.fields.price,
-        created: new Date(),
-        userId: user._id
-      });
-      await newOffer.save();
-      console.log(newOffer);
-      res
-        .status(200)
-        .json({ message: "Your offer has been successfully published." });
-    }
+    await newOffer.save();
+    console.log(newOffer);
+    res
+      .status(200)
+      .json({ message: "Your offer has been successfully published." });
   } catch (error) {
     console.log("error.message", error.message);
     res.json(error.message);
